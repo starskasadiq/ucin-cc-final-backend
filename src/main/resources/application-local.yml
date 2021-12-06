@@ -1,0 +1,11 @@
+spring:
+  # Connection properties using JDBC
+  datasource:
+    url: jdbc:mysql://localhost:3306/cloudcomputing
+    username: root
+    password: sadiqshaik
+    driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: mysql

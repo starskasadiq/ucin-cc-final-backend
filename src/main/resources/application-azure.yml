@@ -1,0 +1,12 @@
+spring:
+  # Connection properties using JDBC
+  datasource:
+#    url: jdbc:mysql://mycloudcomputingserver.mysql.database.azure.com:3306/cloudcomputing
+    url: jdbc:mysql://myserver-cc.mysql.database.azure.com:3306/cc_retail_db
+    username: myadmin
+    password: password123!
+    driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: mysql

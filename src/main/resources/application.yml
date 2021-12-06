@@ -1,0 +1,22 @@
+logging:
+  level:
+    root: info
+
+spring:
+  profiles:
+    active: azure
+  servlet:
+    multipart:
+      max-file-size: 10MB
+
+sqlQueries:
+  batchUpdate:
+    products: INSERT INTO `cc_retail_db`.`400_products`(`PRODUCT_NUM`,`DEPARTMENT`,`COMMODITY`,`BRAND_TY`,`NATURAL_ORGANIC_FLAG`) VALUES(?,?,?,?,?)
+    transactions: INSERT INTO `cc_retail_db`.`400_transactions` (`BASKET_NUM`,`HSHD_NUM`,`PURCHASE_DATE`,`PRODUCT_NUM`,`SPEND`,`UNITS`,`STORE_R`,`WEEK_NUM`,`YEAR`) VALUES(?,?,?,?,?,?,?,?,?)
+    households: INSERT INTO `cc_retail_db`.`400_households` (`HSHD_NUM`,`L`,`AGE_RANGE`,`MARITAL`,`INCOME_RANGE`,`HOMEOWNER`,`HSHD_COMPOSITION`,`HH_SIZE`,`CHILDREN`) VALUES(?,?,?,?,?,?,?,?,?)
+  analysis:
+    ageSpend: select round(avg(400_transactions.SPEND), 2) as SPEND, TRIM(400_households.AGE_RANGE) AS AGE_RANGE from 400_transactions, 400_households where 400_transactions.HSHD_NUM = 400_households.HSHD_NUM and 400_households.AGE_RANGE not like '%null%' and 400_households.AGE_RANGE is not null group by 400_households.age_range
+    incomeSpend: select round(avg(400_transactions.SPEND), 2) as SPEND, TRIM(400_households.INCOME_RANGE) AS INCOME_RANGE from 400_transactions, 400_households where 400_transactions.HSHD_NUM = 400_households.HSHD_NUM and 400_households.INCOME_RANGE not like '%null%' and 400_households.INCOME_RANGE is not null group by 400_households.INCOME_RANGE
+    yearSpend: select round(avg(400_transactions.SPEND),2) as SPEND, 400_transactions.YEAR from 400_transactions group by YEAR
+    growingCommodityByYear: select round(avg(400_transactions.SPEND),2) as SPEND, 400_products.COMMODITY, 400_transactions.YEAR from 400_transactions, 400_products where 400_transactions.PRODUCT_NUM=400_products.PRODUCT_NUM and 400_products.COMMODITY in ('FLORAL','GIFT','MEAT - BEEF','MEAT - PORK','MEDICATION','OUTDOOR','SEAFOOD','SPECIALITY FOOD') group by COMMODITY,YEAR
+    shrinkingCommodityByYear: select round(avg(400_transactions.SPEND),2) as SPEND, 400_products.COMMODITY, 400_transactions.YEAR from 400_transactions, 400_products where 400_transactions.PRODUCT_NUM=400_products.PRODUCT_NUM and 400_products.COMMODITY in ('AUTO','ELECTRONICS','HOLIDAY','SEASONAL PRODUCTS') group by COMMODITY,YEAR
